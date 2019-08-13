@@ -10,29 +10,35 @@
 </template>
 
 <script>
-import { eventBus } from '../main';
+import {  eventBus } from '@/main.js'
 import SightingsService from '@/services/SightingsService.js'
 
 export default {
-	name: "sightings-grid",
-	props: ["sightings"],
-	filters: {
-		format(value){
-			return new Date(value).toLocaleString().substring(0, 10);
-		}
-	},
-	mounted(){
-		SightingsService.getSightings()
-		.then(sightings => this.sightings = sightings);
+  name: "sightings-grid",
+  props: ["sightings"],
+  filters: {
+    format(value) {
+      return new Date(value).toLocaleString().substring(0, 10);
+    }
+  },
 
-		eventBus.$on('sighting.added', (sighting)
-		 => {
-			 this.sightings.push(sighting)
-		 })
-	}, 
-	methods: {
+  mounted() {
+    SightingsService.getSightings()
+      .then(sightings => this.sightings = sightings);
 
-	}
+    eventBus.$on('sighting.added', (sighting) => {
+      this.sightings.push(sighting)
+    })
+
+		eventBus.$on('sighting-deleted', (id) => {
+      let index = this.sightings.findIndex(sighting => sighting._id === id)
+      this.sightings.splice(index, 1)
+    })
+
+  },
+  methods: {
+
+  }
 }
 </script>
 
